@@ -16,7 +16,7 @@ StartTime = as.POSIXct("2017-06-1 08:00:00")    #### Doesnt seem to matter what 
 
 daily_sampled = list()
 for (i in 1:10){
-  daily_sampled[[i]] = getBars(security = security[i], barInterval = 540, startTime = StartTime, con = con)
+  daily_sampled[[i]] = getBars(security = security[i], barInterval = 540, startTime = StartTime, tz = Sys.timezone(), con = con)
   file_name = paste(dir,"daily_sampled/", substr(security[i],1,3), ".csv", sep = "")
   write.csv(daily_sampled[[i]], file_name, row.names = F)
 }
@@ -26,7 +26,7 @@ StartTime = as.POSIXct("2018-01-28 05:00:00")
 
 for (i in 1:10){
   file_name = paste(dir, "intraday/trade_", substr(security[i],1,3), ".csv", sep = "")
-  temp = getTicks(security = security[i], eventType = c("TRADE"), startTime = StartTime, con = con)
+  temp = getTicks(security = security[i], eventType = c("TRADE"), startTime = StartTime, tz = Sys.timezone(), con = con)
   write.csv(temp, file_name, row.names = F)
 }
 
@@ -36,8 +36,8 @@ for (i in 1:10){
   month(EndTime) = month(StartTime) + 1
   for (k in 1:6){
     file_name = paste(dir,"intraday/ask_","00", k,"_" , substr(security[i],1,3), ".csv", sep = "")
-    temp = getTicks(security = security[i], eventType = c("ASK"), startTime = StartTime, endTime = EndTime,  
-                    con = con)
+    temp = getTicks(security = security[i], eventType = c("ASK"), startTime = StartTime, endTime = EndTime, 
+                    tz = Sys.timezone(),con = con)
     write.csv(temp, file_name, row.names = F)
     StartTime = EndTime
     month(EndTime) = month(EndTime) + 1
@@ -51,7 +51,7 @@ for (i in 1:10){
   for (k in 1:6){
     file_name = paste(dir, "intraday/bid_","00", k,"_" , substr(security[i],1,3), ".csv", sep = "")
     temp = getTicks(security = security[i], eventType = c("BID"), startTime = StartTime, endTime = EndTime,  
-                    con = con)
+                    tz = Sys.timezone(),con = con)
     write.csv(temp, file_name, row.names = F)
     StartTime = EndTime
     month(EndTime) = month(EndTime) + 1
