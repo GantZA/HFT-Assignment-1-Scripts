@@ -5,100 +5,11 @@ using CSV
 dir_ds = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/data/daily_sampled"
 dir_intday = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/data/intraday"
 
-trade_files = glob("*.csv",string(dir_intday, "/trades"))
-ask_files = glob("*.csv",string(dir_intday, "/asks"))
-bid_files = glob("*.csv",string(dir_intday, "/bids"))
-
-function keep_non_auction(data, noise_limit=0)
-    return filter(i -> ((Dates.hour(i.times) > 9 && Dates.hour(i.times) < 16) || (Dates.hour(i.times) == 9 && Dates.minute(i.times) >= noise_limit) || (Dates.hour(i.times) == 16 && Dates.minute(i.times) < 50)), data)
-end
-
-function remove_annomolies(data)
-    return filter(i -> i.size > 0, data)
-end
 
 function get_tickers(path)
     return path[end-2:end]
 end
-
 tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
-
-
-function trade_compact(trade_path)
-    trades =  remove_annomolies(keep_non_auction(loadtable(trade_path),10))
-    agg_vol_price = groupby(
-        @NT(
-            aggregate_volume = :size => x -> sum(x),
-            volume_weighted_price = (:size, :value) => x -> sum(map(i-> i.value * i.size, table(x)))/sum(map(i -> i.size, table(x)))
-        ),
-        trades,
-        :times)
-    return agg_vol_price
-end
-
-function quote_compact(quote_path)
-    quotes = remove_annomolies(keep_non_auction(loadtable(quote_path),5))
-    most_recent = groupby(
-        @NT(
-            size = :size => x -> x[end],
-            value = :value => x -> x[end]
-        ),
-        quotes,
-        :times)
-    return most_recent
-end
-j = 1
-for i in 1:60
-    if j == 7
-        j = 1
-    end
-    asks = quote_compact(ask_files[i])
-    bids = quote_compact(bid_files[i])
-    sharename = ask_files[i][end-9:end-7]
-    save(asks, string(dir_intday, "/asks/db", sharename,"00",j))
-    save(bids, string(dir_intday, "/bids/db", sharename,"00",j))
-    j = j + 1
-end
-
-for i in 1:10
-    trades = trade_compact(trade_files[i])
-    sharename = trade_files[i][end-6:end-4]
-    save(trades, string(dir_intday, "/trades/db", sharename))
-end
-
-#Consider NPN
-NPN_trades_org1 = loadtable(trade_files[7])
-NPN_trades_org = trade_compact(trade_files[7])
-a = filter(i -> i.aggregate_volume == 0,NPN_trades_org)
-
-b = filter(i -> i.times == a[1].times,NPN_trades_org1)
-
-
-trade_files = glob(string("db", "NPN","*"),string(dir_intday, "/trades"))
-ask_files = glob(string("db", "NPN", "*"),string(dir_intday, "/asks"))
-bid_files = glob(string("db", "NPN", "*"),string(dir_intday, "/bids"))
-NPN_trades = load(trade_files[1])
-filter(i -> i.aggregate_volume == 0, NPN_trades)
-NPN_asks = load(ask_files[1])
-NPN_bids = load(bid_files[1])
-
-ask_times = select(NPN_asks, :times)
-bid_times = select(NPN_bids, :times)
-NPN_trades[572].times
-ask_times
-length(ask_times)
-length(bid_times)
-a = searchsorted(ask_times, NPN_trades[572].times)
-b = searchsorted(bid_times, NPN_trades[572].times)
-searchsortedfirst(trade_times, ask_times[end])
-searchsortedfirst(trade_times, bid_times[end])
-NPN_trades[176460]
-done(b, start(b))
-done(a, start(a))
-NPN_asks[start(a)-1]
-NPN_asks[start(a)]
-NPN_bids[start(b)-1]
-NPN_bids[start(b)-1]
 
 function get_mid_price(share_code,path)
     ask_files = glob(string("db", share_code, "*"),string(path, "/asks"))
@@ -157,8 +68,8 @@ function get_mid_price(share_code,path)
             after_bid = bids[bid_index_first]
         end
 
-        metrics[i,1] = round((before_ask.value + before_bid.value)/2,2)
-        metrics[i,2] = round((after_ask.value + after_bid.value)/2,2)
+        metrics[i,1] = round((before_ask.value - before_bid.value)/2,2)
+        metrics[i,2] = round((after_ask.value - after_bid.value)/2,2)
         metrics[i,3] = metrics[i,2] - metrics[i,1]
         metrics[i,4] = before_bid.value
         metrics[i,5] = before_bid.size
@@ -186,6 +97,3 @@ tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
 for i in 1:10
     save(all_trades[i], string(dir_intday, "/clean_trades/cln", tickers[i]))
 end
-
-
-a = filter(i -> i.trade_sign ==1, all_trades[10], select=(:times, :trade_sign))
