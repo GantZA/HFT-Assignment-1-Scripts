@@ -13,8 +13,19 @@ function keep_non_auction(data, noise_limit=0)
     return filter(i -> ((Dates.hour(i.times) > 9 && Dates.hour(i.times) < 16) || (Dates.hour(i.times) == 9 && Dates.minute(i.times) >= noise_limit) || (Dates.hour(i.times) == 16 && Dates.minute(i.times) < 50)), data)
 end
 
+function remove_annomolies(data)
+    return filter(i -> i.size > 0, data)
+end
+
+function get_tickers(path)
+    return path[end-2:end]
+end
+
+tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
+
+
 function trade_compact(trade_path)
-    trades =  keep_non_auction(loadtable(trade_path),10)
+    trades =  remove_annomolies(keep_non_auction(loadtable(trade_path),10))
     agg_vol_price = groupby(
         @NT(
             aggregate_volume = :size => x -> sum(x),
@@ -26,7 +37,7 @@ function trade_compact(trade_path)
 end
 
 function quote_compact(quote_path)
-    quotes = keep_non_auction(loadtable(quote_path),5)
+    quotes = remove_annomolies(keep_non_auction(loadtable(quote_path),5))
     most_recent = groupby(
         @NT(
             size = :size => x -> x[end],
@@ -36,11 +47,6 @@ function quote_compact(quote_path)
         :times)
     return most_recent
 end
-
-#Consider NPN
-
-NPN_trades = trade_compact(trade_files[7])
-
 j = 1
 for i in 1:60
     if j == 7
@@ -60,10 +66,10 @@ for i in 1:60
         j = 1
     end
     asks = remove_annomolies(keep_non_auction(loadtable(ask_files[i]),5))
-    bids = remove_annomolies(keep_non_auction(loadtable(bidfiles[i]),5))
+    bids = remove_annomolies(keep_non_auction(loadtable(bid_files[i]),5))
     sharename = ask_files[i][end-9:end-7]
-    save(asks, string(dir_intday, "/asks/raw_asks/db_raw", sharename,"00",j))
-    save(bids, string(dir_intday, "/bids/raw_bids/db_raw", sharename,"00",j))
+    save(asks, string(dir_intday, "/raw_asks/db_raw", sharename,"00",j))
+    save(bids, string(dir_intday, "/raw_bids/db_raw", sharename,"00",j))
     j = j + 1
 end
 
@@ -83,26 +89,55 @@ function get_mid_price(share_code,path)
     asks = load(ask_files[file_index])
     bids = load(bid_files[file_index])
     ask_dates = select(asks, :times)
+    bid_dates = select(bids, :times)
+    trade_dates = select(trades, :times)
     n = length(trades)
     #before_mid_price, after_mid_price, change_mid_price, bid_price, bid_volume,
         #ask_price, ask_volume, trade_sign = Vector(n), Vector(n),Vector(n),
         #Vector(n),Vector(n),Vector(n),Vector(n),Vector(n)
     metrics = Matrix(n,8)
+    end_i = maximum([searchsortedfirst(trade_dates, ask_dates[end]), searchsortedfirst(trade_dates, bid_dates[end])])
     for i in 1:n
         trade_time = trades[i].times
-        if length(filter(j -> j.times < trade_time, asks)) == 0
-            file_index = file_index + 1
-            asks = quote_compact(ask_files[file_index])
-            bids = quote_compact(bid_files[file_index])
-            before_ask = filter(j -> j.times < trade_time, asks)[end]
-        end
-        before_ask = filter(j -> j.times < trade_time, asks)[end]
-        after_ask = filter(j -> j.times >= trade_time,asks)[end]
-        before_bid = filter(j -> j.times < trade_time,bids)[end]
-        after_bid = filter(j -> j.times >= trade_time,bids)[end]
 
-        metrics[i,1] = (before_ask.value - before_bid.value)/2
-        metrics[i,2] = (after_ask.value - after_bid.value)/2
+        if i > end_i
+            file_index = file_index + 1
+            asks = load(ask_files[file_index])
+            bids = load(bid_files[file_index])
+            ask_dates = select(asks, :times)
+            bid_dates = select(bids, :times)
+
+            ask_index = searchsorted(ask_dates, trade_time)
+            bid_index = searchsorted(bid_dates, trade_time)
+            ask_index_first = start(ask_index)
+            bid_index_first = start(bid_index)
+
+            end_i = maximum([searchsortedfirst(trade_dates, ask_dates[end]), searchsortedfirst(trade_dates, bid_dates[end])])
+        else
+            ask_index = searchsorted(ask_dates, trade_time)
+            bid_index = searchsorted(bid_dates, trade_time)
+            ask_index_first = start(ask_index)
+            bid_index_first = start(bid_index)
+        end
+
+
+        before_ask = asks[ask_index_first-1]
+        before_bid = bids[bid_index_first-1]
+
+        if done(ask_index, ask_index_first)
+            after_ask = asks[ask_index_first-1]
+        else
+            after_ask = asks[ask_index_first]
+        end
+
+        if done(bid_index, bid_index_first)
+            after_bid = bids[bid_index_first-1]
+        else
+            after_bid = bids[bid_index_first]
+        end
+
+        metrics[i,1] = round((before_ask.value + before_bid.value)/2,2)
+        metrics[i,2] = round((after_ask.value + after_bid.value)/2,2)
         metrics[i,3] = metrics[i,2] - metrics[i,1]
         metrics[i,4] = before_bid.value
         metrics[i,5] = before_bid.size
@@ -116,11 +151,21 @@ function get_mid_price(share_code,path)
     end
     ind_names = [:before_mid_price, :after_mid_price, :change_mid_price, :bid_price,:bid_volume, :ask_price, :ask_volume, :trade_sign]
     for i in 1:8
-        trades = pushcol(trades,names[i], metrics[:,i])
+        trades = pushcol(trades,ind_names[i], metrics[:,i])
     end
     return trades
 end
-NPN_trades = get_mid_price("NPN", dir_intday)
-NPN_trades
-print(Dates.Time(Dates.now()))
-#23:37
+
+
+tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
+@time all_trades = get_mid_price.(tickers, dir_intday)
+# 25.265582 seconds (76.15 M allocations: 1.776 GiB, 84.71% gc time)
+# 111.243203 seconds (85.17 M allocations: 2.114 GiB, 9.73% gc time)
+# 24.139748 seconds (79.99 M allocations: 1.833 GiB, 79.90% gc time)
+
+
+for i in 1:10
+    save(all_trades[i], string(dir_intday, "/clean_trades/cln", tickers[i]))
+end
+
+using Gadfly

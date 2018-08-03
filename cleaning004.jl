@@ -89,7 +89,7 @@ NPN_quotes[3].ask_value.value > 0
 best_ask = NPN_quotes[1].ask_value.value
 
 i = 1
-mid_price[i]
+table(mid_price)
 
 
 
