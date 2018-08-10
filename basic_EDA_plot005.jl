@@ -41,10 +41,10 @@ function plot_data(share_code,path, start_time, end_time)
         :trade_size = select(trade_plot_data, :aggregate_volume)))
 end
 
-NPN_plot_data = plot_data("NPN",dir_intday, DateTime(2018,01,29,10,00,00),
+NPN_plot_data001 = plot_data("NPN",dir_intday, DateTime(2018,01,29,10,00,00),
     DateTime(2018,01,29,11,00,00))
 
-plot1 = plot(NPN_plot_data,
+plot_NPN_001 = plot(NPN_plot_data001,
     Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("10AM-11AM Naspers Trading"),
     Scale.y_continuous(format=:plain),
     Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
@@ -60,7 +60,7 @@ plot1 = plot(NPN_plot_data,
         x = :times,
         y = :trade_value,
         Geom.point,
-        size = floor.(Int, select(NPN_plot_data, :trade_size)),
+        size = floor.(Int, select(NPN_plot_data001, :trade_size)),
         style(default_color = colorant"yellow",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt
         )
@@ -69,7 +69,7 @@ plot1 = plot(NPN_plot_data,
         x = :times,
         y = :ask_value,
         Geom.point,
-        size = select(NPN_plot_data, :ask_size),
+        size = select(NPN_plot_data001, :ask_size),
         style(default_color = colorant"blue", highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt)
     ),
@@ -77,10 +77,142 @@ plot1 = plot(NPN_plot_data,
         x =:times,
         y =:bid_value,
         Geom.point,
-        size = select(NPN_plot_data, :bid_size),
+        size = select(NPN_plot_data001, :bid_size),
         style(default_color = colorant"red",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt))
     );
 
 dir_plot = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/plots/"
-draw(SVG(string(dir_plot, "plot3.svg"), 16inch, 9inch), plot1)
+draw(SVG(string(dir_plot, "plot_NPN_001.svg"), 16inch, 9inch), plot_NPN_001)
+
+NPN_plot_data002 = plot_data("NPN",dir_intday, DateTime(2018,01,29,16,00,00),
+    DateTime(2018,01,29,17,00,00))
+
+plot_NPN_002 = plot(NPN_plot_data002,
+    Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("4PM-5PM Naspers Trading"),
+    Scale.y_continuous(format=:plain),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    layer(
+        x = :times,
+        y = :micro_price,
+        Geom.point,
+        Stat.yticks(coverage_weight = 0.9),
+        style(default_color = colorant"black", highlight_width = 0pt,
+            point_size=1.5pt)),
+
+    layer(
+        x = :times,
+        y = :trade_value,
+        Geom.point,
+        size = floor.(Int, select(NPN_plot_data002, :trade_size)),
+        style(default_color = colorant"yellow",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt
+        )
+    ),
+    layer(
+        x = :times,
+        y = :ask_value,
+        Geom.point,
+        size = select(NPN_plot_data002, :ask_size),
+        style(default_color = colorant"blue", highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt)
+    ),
+    layer(
+        x =:times,
+        y =:bid_value,
+        Geom.point,
+        size = select(NPN_plot_data002, :bid_size),
+        style(default_color = colorant"red",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt))
+    );
+
+dir_plot = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/plots/"
+draw(SVG(string(dir_plot, "plot_NPN_002.svg"), 16inch, 9inch), plot_NPN_002)
+
+CPI_plot_data001 = plot_data("CPI",dir_intday, DateTime(2018,01,29,10,00,00),
+    DateTime(2018,01,29,11,00,00))
+
+plot_CPI_001 = plot(CPI_plot_data001,
+    Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("10AM-11AM Capitec Trading"),
+    Scale.y_continuous(format=:plain),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    layer(
+        x = :times,
+        y = :micro_price,
+        Geom.point,
+        Stat.yticks(coverage_weight = 0.9),
+        style(default_color = colorant"black", highlight_width = 0pt,
+            point_size=1.5pt)),
+
+    layer(
+        x = :times,
+        y = :trade_value,
+        Geom.point,
+        size = floor.(Int, select(CPI_plot_data001, :trade_size)),
+        style(default_color = colorant"yellow",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt
+        )
+    ),
+    layer(
+        x = :times,
+        y = :ask_value,
+        Geom.point,
+        size = select(CPI_plot_data001, :ask_size),
+        style(default_color = colorant"blue", highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt)
+    ),
+    layer(
+        x =:times,
+        y =:bid_value,
+        Geom.point,
+        size = select(CPI_plot_data001, :bid_size),
+        style(default_color = colorant"red",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt))
+    );
+
+dir_plot = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/plots/"
+draw(SVG(string(dir_plot, "plot_CPI_001.svg"), 16inch, 9inch), plot_CPI_001)
+
+CPI_plot_data002 = plot_data("CPI",dir_intday, DateTime(2018,01,29,16,00,00),
+    DateTime(2018,01,29,17,00,00))
+
+plot_CPI_002 = plot(CPI_plot_data002,
+    Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("4PM-5PM Capitec Trading"),
+    Scale.y_continuous(format=:plain),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    layer(
+        x = :times,
+        y = :micro_price,
+        Geom.point,
+        Stat.yticks(coverage_weight = 0.9),
+        style(default_color = colorant"black", highlight_width = 0pt,
+            point_size=1.5pt)),
+
+    layer(
+        x = :times,
+        y = :trade_value,
+        Geom.point,
+        size = floor.(Int, select(CPI_plot_data002, :trade_size)),
+        style(default_color = colorant"yellow",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt
+        )
+    ),
+    layer(
+        x = :times,
+        y = :ask_value,
+        Geom.point,
+        size = select(CPI_plot_data002, :ask_size),
+        style(default_color = colorant"blue", highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt)
+    ),
+    layer(
+        x =:times,
+        y =:bid_value,
+        Geom.point,
+        size = select(CPI_plot_data002, :bid_size),
+        style(default_color = colorant"red",highlight_width = 0pt,
+            point_size_min = 1.5pt, point_size_max = 8pt))
+    );
+
+dir_plot = "C:/Users/USER/Documents/Michael Gant/HFT/Assignment 1/plots/"
+draw(SVG(string(dir_plot, "plot_CPI_002.svg"), 16inch, 9inch), plot_CPI_002)
