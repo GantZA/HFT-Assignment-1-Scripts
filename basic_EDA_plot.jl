@@ -1,3 +1,8 @@
+#######################################
+# This script reads in the clean TAQ data, and returns the required data for
+# a 1 hour plot of the top of the limit order book. The plotting is done
+# using Gadfly and layers for each type of point (ask, bid, trade, micro-price)
+#######################################
 using Gadfly
 using JuliaDB
 using IterableTables

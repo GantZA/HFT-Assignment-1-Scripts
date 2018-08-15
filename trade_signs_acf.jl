@@ -1,4 +1,7 @@
-#ACF Order Flow
+################################################
+# This script analyzes the trade signs that were classified in the metrics
+# script. The analysis is the plotting of the ACF. 
+###############################################
 
 using StatsBase
 using JuliaDB

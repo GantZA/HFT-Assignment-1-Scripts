@@ -68,8 +68,8 @@ function get_mid_price(share_code,path)
             after_bid = bids[bid_index_first]
         end
 
-        metrics[i,1] = round((before_ask.value - before_bid.value)/2,2)
-        metrics[i,2] = round((after_ask.value - after_bid.value)/2,2)
+        metrics[i,1] = round((before_ask.value + before_bid.value)/2,2)
+        metrics[i,2] = round((after_ask.value + after_bid.value)/2,2)
         metrics[i,3] = metrics[i,2] - metrics[i,1]
         metrics[i,4] = before_bid.value
         metrics[i,5] = before_bid.size
@@ -92,6 +92,8 @@ end
 tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
 @time all_trades = get_mid_price.(tickers, dir_intday)
 # 25.265582 seconds (76.15 M allocations: 1.776 GiB, 84.71% gc time)
+
+@time get_mid_price("NPN", dir_intday)
 
 function normalized_volume(share_code, path)
     trades = load(string(path, "/clean_trades/cln", share_code))

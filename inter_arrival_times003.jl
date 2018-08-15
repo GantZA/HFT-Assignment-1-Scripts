@@ -60,8 +60,8 @@ end
 for i in 1:10
     temp = DataFrame(ita = all_delta_t[i])
     mu = mean(temp[:ita])
-    max_point = maximum(temp[:ita])
-    plot_temp = plot(
+    max_point = quantile(Exponential(mu), 1-(1/length(temp[:ita])))
+    plot_temp = plot(Guide.xlabel("Theoretical Distribution"), Guide.ylabel("Empirical Distribution"), Guide.title(string(tickers[i]," Exponential QQ Plot")),
         layer(x = Exponential(mu),
         y = temp[:ita],
         Stat.qq,
@@ -74,7 +74,9 @@ for i in 1:10
         )
     );
     draw(PNG(string(dir_plot, string("plot_qq_ita_", tickers[i], ".png")),16inch, 8inch), plot_temp)
+    print(i)
 end
+
 
 
 all_delta_t_acf = autocor.(all_delta_t)
@@ -92,6 +94,3 @@ for i in 1:10
             point_size=2pt));
     draw(SVG(string(dir_plot, string("plot_delta_t_acf_",tickers[i],".svg")), 16inch, 8inch), plt_acf)
 end
-
-collect(0:0.1:1)
-[0,0.25,0.5,0.75,1]

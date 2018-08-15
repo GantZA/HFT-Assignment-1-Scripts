@@ -47,7 +47,7 @@ NPN_plot_data001 = plot_data("NPN",dir_intday, DateTime(2018,01,29,10,00,00),
 plot_NPN_001 = plot(NPN_plot_data001,
     Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("10AM-11AM Naspers Trading"),
     Scale.y_continuous(format=:plain),
-    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "red", "blue", "yellow"]),
     layer(
         x = :times,
         y = :micro_price,
@@ -70,7 +70,7 @@ plot_NPN_001 = plot(NPN_plot_data001,
         y = :ask_value,
         Geom.point,
         size = select(NPN_plot_data001, :ask_size),
-        style(default_color = colorant"blue", highlight_width = 0pt,
+        style(default_color = colorant"red", highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt)
     ),
     layer(
@@ -78,7 +78,7 @@ plot_NPN_001 = plot(NPN_plot_data001,
         y =:bid_value,
         Geom.point,
         size = select(NPN_plot_data001, :bid_size),
-        style(default_color = colorant"red",highlight_width = 0pt,
+        style(default_color = colorant"blue",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt))
     );
 
@@ -91,7 +91,7 @@ NPN_plot_data002 = plot_data("NPN",dir_intday, DateTime(2018,01,29,16,00,00),
 plot_NPN_002 = plot(NPN_plot_data002,
     Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("4PM-5PM Naspers Trading"),
     Scale.y_continuous(format=:plain),
-    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "red", "blue", "yellow"]),
     layer(
         x = :times,
         y = :micro_price,
@@ -114,7 +114,7 @@ plot_NPN_002 = plot(NPN_plot_data002,
         y = :ask_value,
         Geom.point,
         size = select(NPN_plot_data002, :ask_size),
-        style(default_color = colorant"blue", highlight_width = 0pt,
+        style(default_color = colorant"red", highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt)
     ),
     layer(
@@ -122,7 +122,7 @@ plot_NPN_002 = plot(NPN_plot_data002,
         y =:bid_value,
         Geom.point,
         size = select(NPN_plot_data002, :bid_size),
-        style(default_color = colorant"red",highlight_width = 0pt,
+        style(default_color = colorant"blue",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt))
     );
 
@@ -135,7 +135,7 @@ CPI_plot_data001 = plot_data("CPI",dir_intday, DateTime(2018,01,29,10,00,00),
 plot_CPI_001 = plot(CPI_plot_data001,
     Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("10AM-11AM Capitec Trading"),
     Scale.y_continuous(format=:plain),
-    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "red", "blue", "yellow"]),
     layer(
         x = :times,
         y = :micro_price,
@@ -158,7 +158,7 @@ plot_CPI_001 = plot(CPI_plot_data001,
         y = :ask_value,
         Geom.point,
         size = select(CPI_plot_data001, :ask_size),
-        style(default_color = colorant"blue", highlight_width = 0pt,
+        style(default_color = colorant"red", highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt)
     ),
     layer(
@@ -166,7 +166,7 @@ plot_CPI_001 = plot(CPI_plot_data001,
         y =:bid_value,
         Geom.point,
         size = select(CPI_plot_data001, :bid_size),
-        style(default_color = colorant"red",highlight_width = 0pt,
+        style(default_color = colorant"blue",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt))
     );
 
@@ -179,7 +179,7 @@ CPI_plot_data002 = plot_data("CPI",dir_intday, DateTime(2018,01,29,16,00,00),
 plot_CPI_002 = plot(CPI_plot_data002,
     Guide.xlabel("Time"), Guide.ylabel("Price"), Guide.title("4PM-5PM Capitec Trading"),
     Scale.y_continuous(format=:plain),
-    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "blue", "red", "yellow"]),
+    Guide.manual_color_key("Legend", ["Micro Price", "Best Ask","Best Bid", "Trade"], ["black", "red", "blue", "yellow"]),
     layer(
         x = :times,
         y = :micro_price,
@@ -202,7 +202,7 @@ plot_CPI_002 = plot(CPI_plot_data002,
         y = :ask_value,
         Geom.point,
         size = select(CPI_plot_data002, :ask_size),
-        style(default_color = colorant"blue", highlight_width = 0pt,
+        style(default_color = colorant"red", highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt)
     ),
     layer(
@@ -210,7 +210,7 @@ plot_CPI_002 = plot(CPI_plot_data002,
         y =:bid_value,
         Geom.point,
         size = select(CPI_plot_data002, :bid_size),
-        style(default_color = colorant"red",highlight_width = 0pt,
+        style(default_color = colorant"blue",highlight_width = 0pt,
             point_size_min = 1.5pt, point_size_max = 8pt))
     );
 

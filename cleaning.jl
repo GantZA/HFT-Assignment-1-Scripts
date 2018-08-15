@@ -1,3 +1,8 @@
+#################################
+# This script reads in the raw TAQ data, removes auctions and annomalies and
+# saves the files using JuliaDB.save so that future loading is faster 
+#################################
+
 using JuliaDB
 using CSV
 

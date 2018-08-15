@@ -1,3 +1,8 @@
+########################################
+# This script obtains the inter-arrival times and analyzes them by plotting
+# the ACF and QQ plot.
+#######################################
+
 using StatsBase
 using JuliaDB
 using IterableTables

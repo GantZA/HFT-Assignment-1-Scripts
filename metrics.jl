@@ -1,3 +1,11 @@
+#######################################
+# This script obtains or calculates the required metrics, such as before and
+# after quote prices, mid-price, mid-price change, and classifies the trade
+# as buyer or seller-initiated.
+# The normalized volume is calculated separately and appended to the dataset
+# which is saved with a "001" added to the naming convention
+######################################
+
 using JuliaDB
 using CSV
 
@@ -88,6 +96,7 @@ end
 
 tickers = get_tickers.(glob(string("db","*"),string(dir_intday, "/trades")))
 @time all_trades = get_mid_price.(tickers, dir_intday)
+# all 10 stocks
 # 25.265582 seconds (76.15 M allocations: 1.776 GiB, 84.71% gc time)
 
 @time get_mid_price("NPN", dir_intday)
