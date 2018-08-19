@@ -6,4 +6,7 @@ My workings for the first assignment for High Frequency Trading Analysis, a mast
 
 I still need to clean up and comment better, but the non-numbered files are mostly the final script files.
 
-This assignment was mainly, data extraction, data cleaning and classification and then exploratory data analysis.
+This assignment was mainly, data extraction, data cleaning and classification and then exploratory data analysis. Below is a summary of the Data Extraction procedure
+
+
+![alt text](https://github.com/GantZA/HFT-Assignment-1-Scripts/blob/master/workflow.jpg)
