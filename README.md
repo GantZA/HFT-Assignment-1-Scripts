@@ -1,4 +1,6 @@
-# HFT-Assignment-1-Scripts
+# HFT-Assignment-1-Scripts (Julia 0.6.4)
+
+NB: Still need to check and update to be compatable with Julia 1.0
 
 My workings for the first assignment for High Frequency Trading Analysis, a masters course at UCT.
 
